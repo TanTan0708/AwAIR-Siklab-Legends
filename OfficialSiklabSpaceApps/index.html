@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siklab Space Apps Map</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+    
+    <style>
+      #map {height: 350px;}
+      @font-face {
+      font-family: "My Custom Font";
+      src: url(C:\Users\Ethan\Documents\OfficialSiklabSpaceApps\Satoshi-Black.ttf) format("truetype");
+      }
+
+      .customfont{
+        font-family: "My Custom Font", Verdana, Tahoma;
+      }
+
+      .container{
+        height: 60px;
+      }
+      .map{
+        z-index: 1;
+        border-radius: 10%;
+      }
+      .button{
+        max-width: fit-content;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .inbutton{
+        z-index: 2;
+        background-image: url('scan.png');
+        background-color: transparent;
+        border-width: 0;
+        margin-top: -30px;
+        position: relative;
+      }
+      .inbutton:hover{
+        z-index: 3;
+        position: relative;
+        background-image: url('scan2.png');
+      }
+
+      .img-swap{
+        float: left;
+        width: 430px;
+        height: 100px;
+        margin-top: -30px;
+        background-image: url('scan.png');
+        transition: all 0.5 ease;
+        z-index: 2;
+        position: relative;
+        zoom: 0.5;
+        
+      }
+
+      .img-swap:hover{
+        background-image: url('scan2.png');
+      }
+
+      .valencia{
+        max-width: fit-content;
+        margin-left: auto;
+        margin-right: auto;
+        zoom: 0.5;
+      }
+
+      .pic{
+        margin-top: -10px;
+      }
+
+      .legends{
+        position: fixed;
+        margin-top: 1.2%;
+      }
+      
+      .left{
+        float: left;
+        right: 51%;
+        zoom: 0.5;
+        position: fixed;
+      }
+      .right{
+        float: left;
+        padding-left: 51%;
+        zoom: 0.5;
+        position: fixed;
+      }
+
+      .speed{
+        position: fixed;
+        margin-top: 5%;
+      }
+      .first{
+        float: left;
+        right: 36.2%;
+        zoom: 0.5;
+        position: fixed;
+      }
+      .second{
+        float: left;
+        padding-left: 61%;
+        zoom: 0.5;
+        position: fixed;
+      }
+      
+    </style>
+  </head>
+  <body data-rsssl=1> <!--datarsssl-->
+    <div class="container">
+      <img style="width: 30px; float: left; padding-left: 10px;" src="menu.png">
+      <img style="width: 35px; float: left; padding-left: 20px; height: 33px;" src="search.png">
+      <img style="width: 40px; float: right; padding-right: 10px;" src="bell.png">
+      <h2 class="customfont" style="text-align: center; padding-right: 90px; padding-top: 5px;">Home</h2>
+    </div>
+    
+    <div class="map" id="map"></div>
+    <div id="output"></div>
+    <script type="module" src="/src/main.js"></script>
+    <script>
+      const options = {
+      enableHighAccuracy: true, 
+      // Get high accuracy reading, if available (default false)
+      timeout: 5000, 
+      // Time to return a position successfully before error (default infinity)
+      maximumAge: 2000, 
+      // Milliseconds for which it is acceptable to use cached position (default 0)
+      };
+      navigator.geolocation.watchPosition(success, error, options);
+      // Fires success function immediately and when user position changes
+      function success(pos) {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      const accuracy = pos.coords.accuracy; // Accuracy in metres
+      //document.getElementById('output').innerText = `
+      //User coordinates: 
+      //Latitude ${lat}.
+      //Longitude ${lng}.
+      //stimation accurate within ${Math.round(accuracy)} metres.`;
+      //}
+      }
+      function error(err) {
+      if (err.code === 1) {
+      alert("Please allow geolocation access");
+      // Runs if user refuses access
+      } else {
+      return;
+      // Runs if there was a technical problem.
+      }
+      }
+    </script>
+    <div class="button">
+      <div class="img-swap"></div>
+    </div>
+
+    <div class="valencia">
+      <img src="valencia.png" alt="" class="pic">
+    </div>
+    <div class="legends">
+      <img src="hiLegends.png" alt="" class="left">
+      <img src="history.png" alt="" class="right">
+    </div>
+
+    <div class="speed">
+      <img src="speedomter.png" alt="" class="first">
+      <img src="speedometer2.png" alt="" class="second">
+    </div>
+  </body>
+
+<script>
+  var map = L.map('map', {
+    zoomControl: false
+  });
+  map.setView([7.91169970968147, 125.09199463782434], 13);
+
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap'
+  }).addTo(map); 
+
+  navigator.geolocation.watchPosition(success, error);
+
+  function success(pos){
+    const lat = pos.coords.latitude;
+    const lng = pos.coords.longitude;
+
+    const m2x = 7.92169970968147
+    const m2y = 125.09199463782434
+
+    const m3x = 7.9369970968147
+    const m3y = 125.112
+    const accuracy = pos.coords.accuracy;
+
+
+    var greenIcon = L.icon({
+      iconUrl: 'methane.png',
+      iconSize:     [50, 50], // size of the icon
+      shadowSize:   [50, 64], // size of the shadow
+      iconAnchor:   [30, 54], // point of the icon which will correspond to marker's location
+      shadowAnchor: [4, 62],  // the same for the shadow
+      popupAnchor:  [0, 900]
+    })
+
+    var redIcon = L.icon({
+      iconUrl: 'Co2.png',
+      iconSize:     [50, 50], // size of the icon
+      shadowSize:   [50, 64], // size of the shadow
+      iconAnchor:   [30, 54], // point of the icon which will correspond to marker's location
+      shadowAnchor: [4, 62],  // the same for the shadow
+      popupAnchor:  [0, 900]
+    })
+
+    var blueIcon = L.icon({
+      iconUrl: 'player.png',
+      iconSize:     [50, 50], // size of the icon
+      shadowSize:   [50, 64], // size of the shadow
+      iconAnchor:   [30, 54], // point of the icon which will correspond to marker's location
+      shadowAnchor: [4, 62],  // the same for the shadow
+      popupAnchor:  [-900, 900]
+    })
+    
+
+    let marker = new L.marker([lat, lng], {icon: blueIcon}).addTo(map);
+    setTimeout(function(){
+    map.removeLayer(marker);
+    }, 40000);
+    map.addLayer(marker);
+    
+
+    let marker2 = new L.marker([m2x, m2y], {icon: greenIcon}).addTo(map);
+    setTimeout(function(){
+    map.removeLayer(marker2);
+    }, 40000);
+    map.addLayer(marker2);
+
+    let marker3 = new L.marker([m3x, m3y], {icon: redIcon}).addTo(map);
+    setTimeout(function(){
+    map.removeLayer(marker3);
+    }, 40000);
+    map.addLayer(marker3);
+
+
+    let circle = L.circle([lat, lng], { radius: accuracy }).addTo(map);
+    setTimeout(function(){
+    map.removeLayer(circle);
+    }, 40000);
+    map.addLayer(circle)
+
+    let circle2 = L.circle([m2x, m2y], { radius: accuracy }).addTo(map);
+    setTimeout(function(){
+    map.removeLayer(circle2);
+    }, 40000);
+    map.addLayer(circle2)
+
+    let circle3 = L.circle([m3x, m3y], { radius: accuracy }).addTo(map);
+    setTimeout(function(){
+    map.removeLayer(circle3);
+    }, 40000);
+
+    
+    circle2.setStyle({color: 'green'});
+
+    circle3.setStyle({color: 'red'});
+
+
+    map.fitBounds(circle.getBounds());
+  }
+
+function error(err){
+  if (err.code === 1){
+    alert("Please allow geolocation access");
+  } else {
+    alert("Cannot get current location");
+  }
+}
+
+map.removeLayer(marker)
+
+</script>
+</html>
